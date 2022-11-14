@@ -103,7 +103,7 @@ const App = () => {
  
   return (
     <div id="main">
-      {status  ?
+      
       <table id="all-users">
       <tbody>
           <tr>
@@ -111,14 +111,16 @@ const App = () => {
             <th>Email</th>
             <th>Password</th>
           </tr>
+          {status  ?
           <tr>
             <td>{print.pName}</td>
             <td>{print.pEmail}</td>
             <td>{print.pPassword}</td>
-          </tr>
+          </tr>:''
+          }
         </tbody>
-      </table>:''
-    }
+      </table>
+    
     {loginStatus == false ?
       <div>
         <form className="signup-form">
