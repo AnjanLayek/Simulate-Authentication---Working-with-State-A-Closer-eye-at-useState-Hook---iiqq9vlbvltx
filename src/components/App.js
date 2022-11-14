@@ -1,120 +1,160 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/App.css";
 import User from "../models/user";
 
 const App = () => {
+ 
+  const [val,setVal] = useState({
+    name: '',
+    email: '',
+    password: '',
+    conPass: '',
+  });
 
-  const [obj, setObj] = useState({ name: "", email: "", password: "" });
-  const [copyobj, setCopyobj] = useState({ name1: "", email1: "", password1: "", password2: "" });
-  const [logInfo, setLoginfo] = useState({ email: "", password: "" });
-  const [status, setStatus] = useState(false);
-  const [status2, setStatus2] = useState(false);
+  const [status,setStatus] = useState(false);
+  const[loginStatus,setLoginStatus] = useState(false);
 
-  const handlechange = () => {
-    // console.log(copyobj);
-    let obj2 = new User(copyobj.email1, copyobj.password1, copyobj.name1);
-    // console.log(obj2);
-    setObj({ ...obj2 });
+  const clickHandler = ((e)=>{
+    e.persist();
+   const {name,value} = e.target;
+   setVal((prev)=>{
+    if(name === 'signupName'){
+      return {
+      name: value,
+      email: prev.email,
+      password: prev.password,
+      conPass: prev.conPass
+      }
+    }else if(name === 'signupEmail'){
+      return {
+      name: prev.name,
+      email: value,
+      password: prev.password,
+      conPass: prev.conPass
+      }
+    }else if(name == 'signupPassword'){
+      return {
+      name: prev.name,
+      email: prev.email,
+      password: value,
+      conPass: prev.conPass
+      }
+    }else if(name == 'signupConfirmPassword'){
+      return {
+      name: prev.name,
+      email: prev.email,
+      password: prev.password,
+      conPass: value,
+      }
+    }
+   })
+  })
+ const [print,setPrint] = useState({
+   pName:'',
+   pEmail:'',
+   pPassword:'',
+ })
+ const [log,setLog] = useState({
+  email:'',
+  password:''
+ })
+  const signup = ((e) =>{
+   
+   // e.preventDefault();
 
-    if (copyobj.password1 == copyobj.password2) {
-      setStatus2(true);
-
+    setPrint(()=>{
+      return{
+      pName: val.name,
+      pEmail:val.email,
+      pPassword:val.password,
     }
-  }
-  const handlechange2 = (event) => {
-    event.persist();
-    if (event.target.id == "signupName") {
-      setCopyobj({ name1: event.target.value, email1: copyobj.email1, password1: copyobj.password1, password2: copyobj.password2 });
-      return
-    }
-    else if (event.target.id == "signupEmail") {
-      setCopyobj({ name1: copyobj.name1, email1: event.target.value, password1: copyobj.password1, password2: copyobj.password2 });
-      return;
-    }
-    else if (event.target.id == "signupConfirmPassword") {
-      setCopyobj({ name1: copyobj.name1, email1: copyobj.email1, password1: copyobj.password1, password2: event.target.value });
-      return;
-    }
-
-    else {
-      setCopyobj({ name1: copyobj.name1, email1: copyobj.email1, password1: event.target.value, password2: copyobj.password2 });
-    }
-  }
-
-  const handlechange3 = (event) => {
-    if (event.target.id == "loginEmail") {
-      setLoginfo({ email: event.target.value, password: logInfo.password });
-      return
-    }
-    else if (event.target.id = "loginPassword") {
-      setLoginfo({ email: logInfo.email, password: event.target.value });
-      return
-    }
-  }
-  const handlelogin = () => {
-    if (copyobj.password1 == logInfo.password && copyobj.email1 == logInfo.email) {
+    })
+    if(val.password === val.conPass){
+     // console.log(val.password)
       setStatus(true);
     }
-    // setStatus(true);
-  }
-  const handlelogout = () => {
-    setStatus(false);
-  }
-
-
+  })
+  const loginHandler=((e)=>{
+    const {name,value} = e.target;
+    setLog((prev)=>{
+      if(name === 'loginEmail'){
+        return{
+          email:value,
+          password:prev.password
+        }
+      }else  if(name === 'loginPassword'){
+        return{
+          email:prev.email,
+          password:value
+        }
+      }
+    
+    })
+  })
+  const login=(()=>{
+     if(val.email == log.email && val.password == log.password ){
+       setLoginStatus(true)
+     }
+  })
+  const logout = (()=>{
+    setLoginStatus(false)
+    setStatus(false)
+  })
+ 
   return (
     <div id="main">
-      {status2 ? <table id="all-users">
-        <tbody>
+      {status  ?
+      <table id="all-users">
+      <tbody>
           <tr>
             <th>Name</th>
             <th>Email</th>
             <th>Password</th>
           </tr>
           <tr>
-            <td>{obj.name}</td>
-            <td>{obj.email}</td>
-            <td>{obj.password}</td>
+            <td>{print.pName}</td>
+            <td>{print.pEmail}</td>
+            <td>{print.pPassword}</td>
           </tr>
         </tbody>
-      </table> : null
-      }
-
-      {status == false ? <div>
+      </table>:''
+    }
+    {loginStatus == false ?
+      <div>
         <form className="signup-form">
           <label htmlFor="name">Name</label>
-          <input type="text" name="signupName" id="signupName" value={copyobj.name} onChange={handlechange2} />
+          <input type="text" name="signupName" id="signupName" onChange={clickHandler}/>
           <label htmlFor="email">Email</label>
-          <input type="email" name="signupEmail" id="signupEmail" value={copyobj.email} onChange={handlechange2} />
+          <input type="email" name="signupEmail" id="signupEmail" onChange= {clickHandler} />
           <label htmlFor="password">Password</label>
-          <input type="password" name="signupPassword" id="signupPassword" value={copyobj.password} onChange={handlechange2} />
+          <input type="password" name="signupPassword" id="signupPassword" onChange={clickHandler} />
           <label htmlFor="confirmPassword">Confirm Password</label>
           <input
             type="password"
             name="signupConfirmPassword"
             id="signupConfirmPassword"
-            value={copyobj.password2}
-            onChange={handlechange2}
+            onChange={clickHandler}
           />
-
         </form>
-        <button id="signup-button" onClick={handlechange}>Signup</button>
+        <button id="signup-button" onClick={signup}>Signup</button>
         <form className="login-styles">
           <label htmlFor="loginEmail">Email</label>
-          <input id="loginEmail" name="loginEmail" type="email" value={logInfo.email} onChange={handlechange3} />
+          <input id="loginEmail" name="loginEmail" type="email"  onChange={loginHandler}/>
           <label htmlFor="loginPassword">Password</label>
-          <input id="loginPassword" name="loginPassword" type="password" value={logInfo.password} onChange={handlechange3} />
+          <input id="loginPassword" name="loginPassword" type="password"  onChange={loginHandler}/>
         </form>
-        <button id="login-button" onClick={handlelogin} >Login</button>
-      </div> : null}
-
-      {status ? <div>
-        <h3 id="username">{obj.name}</h3>
-        <h3 id="email">{obj.email}</h3>
-        <button id="logout-button" onClick={handlelogout}  >Logout</button>
-      </div> : null}
+        <button id="login-button" onClick={login}>Login</button>
+      </div> : ''
+}
+    
+    {loginStatus ?
+      <div>
+        <h3 id="username">{val.name}</h3>
+        <h3 id="email">{log.email}</h3>
+        <button id="logout-button" onClick={logout}>Logout</button>
+      </div> : ''
+   }
     </div>
-
   );
 };
 
